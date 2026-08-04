@@ -7,7 +7,7 @@ from app.config.settings import settings
 from sqlalchemy import create_engine
 
 engine = create_engine(
-    DATABASE_URL,
+    settings.DATABASE_URL,
     pool_pre_ping=True,
     pool_recycle=300,
 )
