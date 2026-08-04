@@ -32,10 +32,7 @@ email-validator
 # AI / LLM
 # ==========================
 google-generativeai
-sentence-transformers
-torch
-transformers
-huggingface-hub
+
 
 # ==========================
 # Numerical

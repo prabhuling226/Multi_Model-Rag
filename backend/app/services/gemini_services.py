@@ -7,7 +7,7 @@ genai.configure(
 )
 
 model = genai.GenerativeModel(
-    "gemini-3.6-flash"
+    "gemini-2.5-flash"
 )
 
 

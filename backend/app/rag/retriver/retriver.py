@@ -15,7 +15,7 @@ class Retriever:
         top_k: int = 5
     ):
 
-        query_embedding = EmbeddingService.embed(query)
+        query_embedding = EmbeddingService.embed_query(query)
 
         chunks = (
             self.db.query(Chunk)

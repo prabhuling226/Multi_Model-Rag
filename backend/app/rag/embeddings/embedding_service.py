@@ -1,26 +1,30 @@
-from sentence_transformers import SentenceTransformer
+import google.generativeai as genai
+
+from app.config.settings import settings
+
+genai.configure(api_key=settings.GOOGLE_API_KEY)
 
 
 class EmbeddingService:
 
-    _model = None
+    @staticmethod
+    def embed_document(text: str):
 
-    @classmethod
-    def get_model(cls):
-        if cls._model is None:
-            cls._model = SentenceTransformer(
-                "all-MiniLM-L6-v2"
-            )
-        return cls._model
-
-    @classmethod
-    def embed(cls, text: str):
-
-        model = cls.get_model()
-
-        vector = model.encode(
-            text,
-            convert_to_numpy=True
+        response = genai.embed_content(
+            model="models/text-embedding-004",
+            content=text,
+            task_type="retrieval_document"
         )
 
-        return vector.tolist()
+        return response["embedding"]
+
+    @staticmethod
+    def embed_query(text: str):
+
+        response = genai.embed_content(
+            model="models/text-embedding-004",
+            content=text,
+            task_type="retrieval_query"
+        )
+
+        return response["embedding"]

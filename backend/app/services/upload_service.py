@@ -53,7 +53,7 @@ class UploadService:
 
             for chunk in chunks:
 
-                embedding = EmbeddingService.embed(
+                embedding = EmbeddingService.embed_document(
                     chunk.content
                 )
 
