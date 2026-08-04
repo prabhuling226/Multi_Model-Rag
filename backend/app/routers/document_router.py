@@ -6,6 +6,7 @@ from fastapi import (
     HTTPException,
     status,
 )
+
 from sqlalchemy.orm import Session
 import os
 
@@ -25,21 +26,21 @@ router = APIRouter(
 # ==========================
 # Upload Documents
 # ==========================
+
+router = APIRouter(
+    prefix="/documents",
+    tags=["Documents"],
+)
 @router.post("/upload")
 async def upload_documents(
-    files: list[UploadFile] = File(...),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    files: list[UploadFile] = File(...)
 ):
-    print("========== UPLOAD ROUTE HIT ==========")
-    print([file.filename for file in files])
+    print("UPLOAD ROUTE HIT")
 
-    service = UploadService(db)
-
-    return await service.upload_files(
-        files=files,
-        owner_id=current_user.id,
-    )
+    return {
+        "success": True,
+        "files": [file.filename for file in files]
+    }
 
 
 # ==========================
@@ -75,3 +76,10 @@ def delete_document(
         document_id=document_id,
         user_id=current_user.id,
     )
+
+from fastapi import APIRouter, UploadFile, File
+
+router = APIRouter(
+    prefix="/documents",
+    tags=["Documents"],
+)
