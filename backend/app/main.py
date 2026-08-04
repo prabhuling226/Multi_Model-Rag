@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import app.models
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.config.database import Base, engine
 from app.config.settings import settings
 from app.routers.dashboard_router import router as dashboard_router
@@ -21,6 +21,8 @@ app = FastAPI(
 Base.metadata.create_all(bind=engine)
 
 # CORS
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex=r"https://.*\.vercel\.app",
