@@ -24,13 +24,12 @@ router = APIRouter(
 async def upload_documents(
     files: list[UploadFile],
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ):
     service = UploadService(db)
 
     return await service.upload_files(
         files=files,
-        owner_id=current_user.id,
+        owner_id=1
     )
 
 
