@@ -77,3 +77,4 @@ loguru
 # Testing
 # ==========================
 pytest
+paddleocr
