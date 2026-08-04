@@ -1,23 +1,79 @@
+# ==========================
+# FastAPI
+# ==========================
 fastapi
 uvicorn[standard]
+python-multipart
+
+# ==========================
+# Database
+# ==========================
 sqlalchemy
 psycopg2-binary
 alembic
-python-dotenv
+pgvector
+
+# ==========================
+# Authentication
+# ==========================
 python-jose[cryptography]
 passlib[bcrypt]
-python-multipart
+bcrypt
+
+# ==========================
+# Configuration
+# ==========================
+python-dotenv
 pydantic
 pydantic-settings
 email-validator
-sentence-transformers
+
+# ==========================
+# AI / LLM
+# ==========================
 google-generativeai
-pgvector
+sentence-transformers
+torch
+transformers
+huggingface-hub
+
+# ==========================
+# Numerical
+# ==========================
 numpy
-python-docx
-pypdf
-loguru
-pytest
-httpx
-docker
 pandas
+scikit-learn
+scipy
+
+# ==========================
+# PDF Processing
+# ==========================
+pypdf
+pdfplumber
+pymupdf
+
+# ==========================
+# OCR & Images
+# ==========================
+pillow
+opencv-python-headless
+pytesseract
+
+# ==========================
+# Word / Excel / PowerPoint
+# ==========================
+python-docx
+openpyxl
+python-pptx
+
+# ==========================
+# Utilities
+# ==========================
+httpx
+requests
+loguru
+
+# ==========================
+# Testing
+# ==========================
+pytest
