@@ -24,13 +24,16 @@ Base.metadata.create_all(bind=engine)
 
 
 app.add_middleware(
+app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origins=[
+        "http://localhost:5173",
+        "https://multi-model-rag-ten.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # Authentication Routes
 app.include_router(
     api_router,
