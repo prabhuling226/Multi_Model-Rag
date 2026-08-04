@@ -77,7 +77,5 @@ loguru
 # Testing
 # ==========================
 pytest
-paddleocr
-paddlepaddle
 opencv-python-headless
 Pillow
