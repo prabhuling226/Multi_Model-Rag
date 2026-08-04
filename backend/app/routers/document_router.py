@@ -5,7 +5,12 @@ from fastapi import (
     HTTPException,
     status,
 )
-
+from fastapi import (
+    APIRouter,
+    Depends,
+    UploadFile,
+    File,
+)
 from sqlalchemy.orm import Session
 import os
 
@@ -27,10 +32,13 @@ router = APIRouter(
 # ==========================
 @router.post("/upload")
 async def upload_documents(
-    files: list[UploadFile],
+    files: list[UploadFile] = File(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    print("========== UPLOAD ROUTE HIT ==========")
+    print([file.filename for file in files])
+
     service = UploadService(db)
 
     return await service.upload_files(
