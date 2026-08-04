@@ -26,15 +26,7 @@ def get_profile(
     current_user: User = Depends(get_current_user),
 ):
     service = ProfileService(db)
-
-    try:
-        return service.get_profile(current_user.id)
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail=str(e)
-        )
+    return service.get_profile(current_user.id)
 
 
 @router.put("/", response_model=MessageResponse)

@@ -1,30 +1,24 @@
-import google.generativeai as genai
+from google import genai
 
 from app.config.settings import settings
 
-genai.configure(api_key=settings.GOOGLE_API_KEY)
+client = genai.Client(api_key=settings.GOOGLE_API_KEY)
 
 
 class EmbeddingService:
 
     @staticmethod
     def embed_document(text: str):
-
-        response = genai.embed_content(
-            model="models/text-embedding-004",
-            content=text,
-            task_type="retrieval_document"
+        response = client.models.embed_content(
+            model="text-embedding-004",
+            contents=text,
         )
-
-        return response["embedding"]
+        return response.embeddings[0].values
 
     @staticmethod
     def embed_query(text: str):
-
-        response = genai.embed_content(
-            model="models/text-embedding-004",
-            content=text,
-            task_type="retrieval_query"
+        response = client.models.embed_content(
+            model="text-embedding-004",
+            contents=text,
         )
-
-        return response["embedding"]
+        return response.embeddings[0].values
