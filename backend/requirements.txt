@@ -1,9 +1,10 @@
 # ==========================
 # FastAPI
 # ==========================
-fastapi
-uvicorn[standard]
-python-multipart
+fastapi==0.115.12
+starlette==0.46.2
+uvicorn[standard]==0.34.2
+python-multipart==0.0.20
 
 # ==========================
 # Database

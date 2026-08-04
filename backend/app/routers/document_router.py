@@ -2,14 +2,9 @@ from fastapi import (
     APIRouter,
     Depends,
     UploadFile,
+    File,
     HTTPException,
     status,
-)
-from fastapi import (
-    APIRouter,
-    Depends,
-    UploadFile,
-    File,
 )
 from sqlalchemy.orm import Session
 import os
