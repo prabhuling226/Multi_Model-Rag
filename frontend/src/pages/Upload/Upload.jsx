@@ -22,6 +22,9 @@ function Upload() {
         try {
             setLoading(true);
             setMessage("");
+            console.log("FILES:", files);
+            console.log("FIRST FILE:", files[0]);
+            console.log("IS FILE:", files[0] instanceof File);
 
             await documentService.uploadDocuments(files);
 

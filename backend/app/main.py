@@ -78,3 +78,10 @@ def health():
     return {
         "status": "healthy",
     }
+
+print("========== REGISTERED ROUTES ==========")
+
+for route in app.routes:
+    print(route.path, route.methods)
+
+print("=======================================")
