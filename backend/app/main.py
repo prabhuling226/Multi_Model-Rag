@@ -2,12 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import app.models
-from fastapi.middleware.cors import CORSMiddleware
 from app.config.database import Base, engine
 from app.config.settings import settings
-from app.routers.dashboard_router import router as dashboard_router
-from app.api.router import api_router
 
+from app.api.router import api_router
+from app.routers.dashboard_router import router as dashboard_router
 from app.routers.document_router import router as document_router
 from app.routers.chat_router import router as chat_router
 from app.routers.profile_router import router as profile_router
@@ -20,10 +19,9 @@ app = FastAPI(
 # Create Database Tables
 Base.metadata.create_all(bind=engine)
 
-# CORS
-
-
-app.add_middleware(
+# -----------------------------
+# CORS Configuration
+# -----------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -34,6 +32,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # Authentication Routes
 app.include_router(
     api_router,
@@ -58,9 +57,10 @@ app.include_router(
     prefix=settings.API_V1_STR,
 )
 
+# Dashboard Routes
 app.include_router(
     dashboard_router,
-    prefix="/api/v1"
+    prefix=settings.API_V1_STR,
 )
 
 # Home Route
