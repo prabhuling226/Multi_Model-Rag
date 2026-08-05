@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.security import (
     hash_password,
     verify_password,
-    create_access_token
+    create_access_token,
 )
 from app.config.settings import settings
 from app.models.user import User
@@ -20,7 +20,7 @@ class AuthService:
         self,
         full_name: str,
         email: str,
-        password: str
+        password: str,
     ):
 
         existing_user = (
@@ -32,10 +32,16 @@ class AuthService:
         if existing_user:
             raise ValueError("Email already registered.")
 
+        hashed_password = hash_password(password)
+
+        print("========== REGISTER DEBUG ==========")
+        print("EMAIL:", email)
+        print("HASH:", hashed_password)
+
         user = User(
             full_name=full_name,
             email=email,
-            password=hash_password(password)
+            password=hashed_password,
         )
 
         self.db.add(user)
@@ -49,8 +55,11 @@ class AuthService:
     def login(
         self,
         email: str,
-        password: str
+        password: str,
     ):
+
+        print("========== LOGIN DEBUG ==========")
+        print("EMAIL:", email)
 
         user = (
             self.db.query(User)
@@ -58,23 +67,39 @@ class AuthService:
             .first()
         )
 
-        if not user:
+        print("USER:", user)
+
+        if user is None:
+            print("❌ USER NOT FOUND")
             raise ValueError("Invalid email or password.")
 
-        if not verify_password(
+        print("STORED HASH:", user.password)
+
+        valid = verify_password(
             password,
-            user.password
-        ):
+            user.password,
+        )
+
+        print("VERIFY RESULT:", valid)
+
+        if not valid:
+            print("❌ PASSWORD MISMATCH")
             raise ValueError("Invalid email or password.")
+
+        print("✅ PASSWORD VERIFIED")
 
         access_token = create_access_token(
-            data={"sub": str(user.id)},
+            data={
+                "sub": str(user.id),
+            },
             expires_delta=timedelta(
                 minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-            )
+            ),
         )
+
+        print("TOKEN CREATED")
 
         return {
             "access_token": access_token,
-            "token_type": "bearer"
+            "token_type": "bearer",
         }

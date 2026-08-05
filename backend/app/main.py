@@ -24,13 +24,16 @@ except Exception as e:
 # -----------------------------
 # CORS Configuration
 # -----------------------------
+
+
+print("========== CORS DEBUG ==========")
+print("USING WILDCARD CORS")
+print("================================")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "https://multi-model-rag-ten.vercel.app",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
