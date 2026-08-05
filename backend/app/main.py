@@ -1,51 +1,89 @@
-from fastapi import APIRouter, Depends, UploadFile, File
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from app.config.database import get_db
-from app.api.dependencies import get_current_user
-from app.models.user import User
-from app.models.document import Document
-from app.services.document_service import DocumentService
+import app.models
+from app.config.database import Base, engine
+from app.config.settings import settings
 
-router = APIRouter(
-    prefix="/documents",
-    tags=["Documents"],
+from app.api.router import api_router
+from app.routers.dashboard_router import router as dashboard_router
+from app.routers.document_router import router as document_router
+from app.routers.chat_router import router as chat_router
+from app.routers.profile_router import router as profile_router
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version="1.0.0",
 )
 
-@router.post("/upload")
-async def upload_documents(
-    files: list[UploadFile] = File(...)
-):
-    print("UPLOAD ROUTE HIT")
+# Create Database Tables
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print(f"Database startup failed: {e}")
+# -----------------------------
+# CORS Configuration
+# -----------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "https://multi-model-rag-ten.vercel.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+# Authentication Routes
+app.include_router(
+    api_router,
+    prefix=settings.API_V1_STR,
+)
+
+# Profile Routes
+app.include_router(
+    profile_router,
+    prefix=settings.API_V1_STR,
+)
+
+# Document Routes
+app.include_router(
+    document_router,
+    prefix=settings.API_V1_STR,
+)
+
+# Chat Routes
+app.include_router(
+    chat_router,
+    prefix=settings.API_V1_STR,
+)
+
+# Dashboard Routes
+app.include_router(
+    dashboard_router,
+    prefix=settings.API_V1_STR,
+)
+
+# Home Route
+@app.get("/")
+def home():
     return {
         "success": True,
-        "files": [file.filename for file in files]
+        "message": "AI Document Chat Backend Running",
     }
 
-@router.get("/")
-def get_documents(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    documents = (
-        db.query(Document)
-        .filter(Document.owner_id == current_user.id)
-        .order_by(Document.id.desc())
-        .all()
-    )
 
-    return documents
+# Health Check
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy",
+    }
 
-@router.delete("/{document_id}")
-def delete_document(
-    document_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    service = DocumentService(db)
+print("========== REGISTERED ROUTES ==========")
 
-    return service.delete_document(
-        document_id=document_id,
-        user_id=current_user.id,
-    )
+for route in app.routes:
+    print(route.path, route.methods)
+
+print("=======================================")

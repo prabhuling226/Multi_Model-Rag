@@ -1,36 +1,17 @@
-from fastapi import (
-    APIRouter,
-    Depends,
-    UploadFile,
-    File,
-    HTTPException,
-    status,
-)
-
+from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.orm import Session
-import os
 
 from app.config.database import get_db
-from app.services.upload_service import UploadService
-from app.services.document_service import DocumentService
 from app.api.dependencies import get_current_user
 from app.models.user import User
 from app.models.document import Document
+from app.services.document_service import DocumentService
 
 router = APIRouter(
     prefix="/documents",
     tags=["Documents"],
 )
 
-
-# ==========================
-# Upload Documents
-# ==========================
-
-router = APIRouter(
-    prefix="/documents",
-    tags=["Documents"],
-)
 @router.post("/upload")
 async def upload_documents(
     files: list[UploadFile] = File(...)
@@ -42,10 +23,6 @@ async def upload_documents(
         "files": [file.filename for file in files]
     }
 
-
-# ==========================
-# Get User Documents
-# ==========================
 @router.get("/")
 def get_documents(
     db: Session = Depends(get_db),
@@ -60,10 +37,6 @@ def get_documents(
 
     return documents
 
-
-# ==========================
-# Delete Document
-# ==========================
 @router.delete("/{document_id}")
 def delete_document(
     document_id: int,
@@ -76,10 +49,3 @@ def delete_document(
         document_id=document_id,
         user_id=current_user.id,
     )
-
-from fastapi import APIRouter, UploadFile, File
-
-router = APIRouter(
-    prefix="/documents",
-    tags=["Documents"],
-)
