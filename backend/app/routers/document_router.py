@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, UploadFile, File
+
 from app.config.database import get_db
 from app.api.dependencies import get_current_user
 from app.models.user import User
@@ -13,21 +13,17 @@ router = APIRouter(
 )
 
 @router.post("/upload")
-async def upload_documents(request: Request):
-
-    print("=" * 60)
+async def upload_documents(
+    files: list[UploadFile] = File(...)
+):
     print("UPLOAD ROUTE HIT")
-    print("HEADERS:")
-    print(request.headers)
-
-    body = await request.body()
-
-    print("BODY SIZE:", len(body))
-    print("=" * 60)
+    print([file.filename for file in files])
 
     return {
-        "success": True
+        "success": True,
+        "files": [file.filename for file in files]
     }
+
 
 @router.get("/")
 def get_documents(
@@ -42,6 +38,7 @@ def get_documents(
     )
 
     return documents
+
 
 @router.delete("/{document_id}")
 def delete_document(
