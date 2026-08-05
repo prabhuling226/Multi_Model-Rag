@@ -26,18 +26,18 @@ except Exception as e:
 # -----------------------------
 
 
-print("========== CORS DEBUG ==========")
-print("USING WILDCARD CORS")
-print("================================")
+from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=[
+        "https://multi-model-rag-1.onrender.com",
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # Authentication Routes
 app.include_router(
     api_router,
