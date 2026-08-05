@@ -9,18 +9,24 @@ from app.services.document_service import DocumentService
 
 router = APIRouter(
     prefix="/documents",
-    tags=["Documents"],
+    tags=["Documents"]
 )
 
 @router.post("/upload")
-async def upload_documents(
-    files: list[UploadFile] = File(...),
-):
+async def upload_documents(request: Request):
+
+    print("=" * 60)
     print("UPLOAD ROUTE HIT")
+    print("HEADERS:")
+    print(request.headers)
+
+    body = await request.body()
+
+    print("BODY SIZE:", len(body))
+    print("=" * 60)
 
     return {
-        "success": True,
-        "files": [file.filename for file in files]
+        "success": True
     }
 
 @router.get("/")
