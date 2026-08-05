@@ -38,12 +38,13 @@ def register(
         )
 
 
+
+
 @router.post("/login")
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-
     service = AuthService(db)
 
     return service.login(

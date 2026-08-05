@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.post("/upload")
 async def upload_documents(
-    files: list[UploadFile] = File(...)
+    files: list[UploadFile] = File(...),
 ):
     print("UPLOAD ROUTE HIT")
 

@@ -26,15 +26,25 @@ function LoginForm() {
             setLoading(true);
             setApiError("");
 
-            const response = await authService.login(data);
+            const response = await authService.login({
+                email: data.email,
+                password: data.password,
+            });
 
             login(response.access_token);
 
             navigate("/dashboard");
+
         } catch (error) {
-            setApiError(
-                error.response?.data?.detail || "Invalid email or password."
-            );
+            console.error(error);
+
+            const detail = error.response?.data?.detail;
+
+            if (Array.isArray(detail)) {
+                setApiError(detail.map((e) => e.msg).join(", "));
+            } else {
+                setApiError(detail || "Invalid email or password.");
+            }
         } finally {
             setLoading(false);
         }

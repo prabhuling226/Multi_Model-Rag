@@ -42,12 +42,12 @@ function RegisterForm() {
         } catch (error) {
             console.error(error);
 
-            if (error.response) {
-                setApiError(error.response.data.detail);
-            } else if (error.request) {
-                setApiError("Cannot connect to backend server.");
+            const detail = error.response?.data?.detail;
+
+            if (Array.isArray(detail)) {
+                setApiError(detail.map((e) => e.msg).join(", "));
             } else {
-                setApiError(error.message);
+                setApiError(detail || "Registration failed.");
             }
         } finally {
             setLoading(false);

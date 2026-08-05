@@ -7,10 +7,15 @@ const authService = {
     },
 
     login: async ({ email, password }) => {
+
+        alert("NEW AUTH SERVICE IS RUNNING");
+
         const formData = new URLSearchParams();
 
         formData.append("username", email);
         formData.append("password", password);
+
+        console.log(formData.toString());
 
         const response = await api.post(
             "/auth/login",
