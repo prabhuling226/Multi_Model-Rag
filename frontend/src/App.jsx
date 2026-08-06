@@ -12,16 +12,23 @@ import Settings from "./pages/Settings/Settings";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("access_token");
-
   return token ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
+  const token = localStorage.getItem("access_token");
+
   return (
     <Routes>
-      {/* Authentication */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      {/* Authentication Routes */}
+      <Route
+        path="/login"
+        element={token ? <Navigate to="/dashboard" replace /> : <Login />}
+      />
+      <Route
+        path="/register"
+        element={token ? <Navigate to="/dashboard" replace /> : <Register />}
+      />
 
       {/* Protected Routes */}
       <Route
@@ -51,7 +58,6 @@ function App() {
         }
       />
 
-      {/* Global AI Chat */}
       <Route
         path="/chat"
         element={
@@ -61,7 +67,6 @@ function App() {
         }
       />
 
-      {/* Document Specific Chat */}
       <Route
         path="/chat/:id"
         element={
@@ -89,9 +94,15 @@ function App() {
         }
       />
 
-      {/* Redirects */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      {/* Fallback Redirects */}
+      <Route
+        path="/"
+        element={<Navigate to={token ? "/dashboard" : "/login"} replace />}
+      />
+      <Route
+        path="*"
+        element={<Navigate to={token ? "/dashboard" : "/login"} replace />}
+      />
     </Routes>
   );
 }

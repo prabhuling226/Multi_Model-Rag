@@ -7,18 +7,18 @@ const getBaseUrl = () => {
             url = url.replace(/VITE_API_URL=/g, "");
         }
         url = url.trim();
-        if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/")) {
+        if (url.startsWith("http://") || url.startsWith("https://")) {
             return url;
         }
     }
-    // Default to relative API endpoint (proxied by Vercel serverless rewrite)
-    return "/api/v1";
+    return "https://multi-model-rag.onrender.com/api/v1";
 };
 
 const api = axios.create({
     baseURL: getBaseUrl(),
 });
 
+// Request Interceptor: Attach JWT Bearer Token
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem("access_token");
 
@@ -28,5 +28,24 @@ api.interceptors.request.use((config) => {
 
     return config;
 });
+
+// Response Interceptor: Automatically redirect to /login on 401 Unauthorized
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            if (
+                window.location.pathname !== "/login" &&
+                window.location.pathname !== "/register"
+            ) {
+                window.location.href = "/login";
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 
 export default api;
