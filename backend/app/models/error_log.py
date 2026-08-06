@@ -12,7 +12,8 @@ class ErrorLog(Base):
 
     id: Mapped[int] = mapped_column(
         Integer,
-        primary_key=True
+        primary_key=True,
+        index=True
     )
 
     endpoint: Mapped[str] = mapped_column(
@@ -33,10 +34,12 @@ class ErrorLog(Base):
 
     user_id: Mapped[int | None] = mapped_column(
         Integer,
-        nullable=True
+        nullable=True,
+        index=True
     )
 
     timestamp: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow
+        default=datetime.utcnow,
+        index=True
     )

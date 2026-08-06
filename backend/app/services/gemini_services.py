@@ -43,14 +43,16 @@ Question:
 Answer:
 """
 
-        try:
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt,
-            )
+        models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash"]
+        for model in models_to_try:
+            try:
+                response = client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                )
+                if response and response.text:
+                    return response.text.strip()
+            except Exception as e:
+                print(f"Gemini Error with {model}: {e}")
 
-            return response.text.strip()
-
-        except Exception as e:
-            print(f"Gemini Error: {e}")
-            return "Unable to generate a response at the moment."
+        return "Unable to generate a response at the moment."

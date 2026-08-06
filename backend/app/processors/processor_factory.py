@@ -5,6 +5,7 @@ from app.processors.image_processor import ImageProcessor
 from app.processors.pdf.pdf_processor import PDFProcessor
 from app.processors.ppt_processor import PPTProcessor
 from app.processors.word_processor import WordProcessor
+from app.processors.txt_processor import TxtProcessor
 
 
 class ProcessorFactory:
@@ -18,6 +19,8 @@ class ProcessorFactory:
         ".xlsx": ExcelProcessor,
         ".xls": ExcelProcessor,
         ".pptx": PPTProcessor,
+        ".txt": TxtProcessor,
+        ".md": TxtProcessor,
     }
 
     @classmethod
@@ -32,4 +35,4 @@ class ProcessorFactory:
                 f"Unsupported file type: {extension}"
             )
 
-        return processor()
+        return processor()

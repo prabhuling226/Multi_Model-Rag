@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.config.database import get_db
@@ -19,11 +19,20 @@ def chat(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-
     service = ChatService(db)
 
     return service.ask(
-        document_id=request.document_id,
         question=request.question,
+        document_id=request.document_id,
         user_id=current_user.id
     )
+
+
+@router.get("/history")
+def get_chat_history(
+    document_id: int | None = Query(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    service = ChatService(db)
+    return service.get_history(user_id=current_user.id, document_id=document_id)

@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta
-
+from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
@@ -10,7 +9,7 @@ pwd_context = CryptContext(
     deprecated="auto"
 )
 
-ALGORITHM = settings.ALGORITHM
+ALGORITHM = settings.ALGORITHM if hasattr(settings, "ALGORITHM") and settings.ALGORITHM else "HS256"
 
 
 def hash_password(password: str) -> str:
@@ -21,49 +20,43 @@ def verify_password(
     plain_password: str,
     hashed_password: str
 ) -> bool:
-    return pwd_context.verify(
-        plain_password,
-        hashed_password
-    )
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except Exception as e:
+        print(f"Password verification error: {e}")
+        return False
 
 
 def create_access_token(
     data: dict,
     expires_delta: timedelta | None = None
-):
+) -> str:
+    to_encode = data.copy()
 
-    payload = data.copy()
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES if hasattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES") else 1440)
 
-    expire = (
-        datetime.utcnow() +
-        (
-            expires_delta
-            if expires_delta
-            else timedelta(hours=24)
-        )
-    )
+    to_encode.update({"exp": expire})
 
-    payload.update({"exp": expire})
-
-    return jwt.encode(
-        payload,
+    encoded_jwt = jwt.encode(
+        to_encode,
         settings.SECRET_KEY,
         algorithm=ALGORITHM
     )
 
+    return encoded_jwt
 
-def decode_access_token(token: str):
 
+def decode_access_token(token: str) -> dict | None:
     try:
-
         payload = jwt.decode(
             token,
             settings.SECRET_KEY,
             algorithms=[ALGORITHM]
         )
-
         return payload
-
-    except JWTError:
-
+    except JWTError as err:
+        print(f"JWT Decode error: {err}")
         return None

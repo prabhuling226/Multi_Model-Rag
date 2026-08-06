@@ -40,15 +40,22 @@ include it.
 Produce a description suitable for semantic search.
 """
 
-            response = self.client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=[
-                    prompt,
-                    image,
-                ],
-            )
+            models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash"]
+            for model in models_to_try:
+                try:
+                    response = self.client.models.generate_content(
+                        model=model,
+                        contents=[
+                            prompt,
+                            image,
+                        ],
+                    )
+                    if response and response.text:
+                        return response.text.strip()
+                except Exception as e:
+                    print(f"Gemini Vision Error with {model}: {e}")
 
-            return response.text or ""
+            return ""
 
         except Exception as e:
             print(f"Gemini Vision Error: {e}")

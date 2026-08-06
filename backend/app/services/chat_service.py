@@ -12,22 +12,35 @@ class ChatService:
 
     def ask(
         self,
-        document_id: int,
         question: str,
+        document_id: int | None = None,
         user_id: int = 1
     ):
-
         retriever = Retriever(self.db)
 
         chunks = retriever.retrieve(
-            document_id=document_id,
             query=question,
+            document_id=document_id,
+            user_id=user_id,
             top_k=5
         )
 
+        sources = [
+            {
+                "chunk_id": chunk.id,
+                "document_id": chunk.document_id,
+                "document_name": chunk.document.filename if chunk.document else f"Doc #{chunk.document_id}",
+                "page_number": chunk.page_number,
+                "snippet": chunk.chunk_text[:180] + ("..." if len(chunk.chunk_text) > 180 else ""),
+            }
+            for chunk in chunks
+        ]
+
         if not chunks:
+            answer = "I couldn't find any relevant information in your uploaded documents. Please upload documents related to your query."
             return {
-                "answer": "No relevant information found in this document."
+                "answer": answer,
+                "sources": []
             }
 
         context = Retriever.build_context(chunks)
@@ -37,17 +50,38 @@ class ChatService:
             question=question
         )
 
-        chat = Chat(
-            question=question,
-            answer=answer,
-            user_id=user_id,
-            document_id=document_id
-        )
-
-        self.db.add(chat)
-        self.db.commit()
-        self.db.refresh(chat)
+        try:
+            chat = Chat(
+                question=question,
+                answer=answer,
+                user_id=user_id,
+                document_id=document_id
+            )
+            self.db.add(chat)
+            self.db.commit()
+            self.db.refresh(chat)
+        except Exception as err:
+            self.db.rollback()
+            print(f"Failed to save chat history: {err}")
 
         return {
-            "answer": answer
+            "answer": answer,
+            "sources": sources
         }
+
+    def get_history(self, user_id: int, document_id: int | None = None):
+        query = self.db.query(Chat).filter(Chat.user_id == user_id)
+        if document_id is not None:
+            query = query.filter(Chat.document_id == document_id)
+
+        history = query.order_by(Chat.created_at.desc()).limit(50).all()
+        return [
+            {
+                "id": chat.id,
+                "question": chat.question,
+                "answer": chat.answer,
+                "document_id": chat.document_id,
+                "created_at": chat.created_at.isoformat() if chat.created_at else None
+            }
+            for chat in history
+        ]

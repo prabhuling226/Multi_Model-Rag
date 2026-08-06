@@ -20,7 +20,8 @@ class Chunk(Base):
 
     id: Mapped[int] = mapped_column(
         Integer,
-        primary_key=True
+        primary_key=True,
+        index=True
     )
 
     content_type: Mapped[str] = mapped_column(
@@ -54,7 +55,8 @@ class Chunk(Base):
     )
 
     document_id: Mapped[int] = mapped_column(
-        ForeignKey("documents.id")
+        ForeignKey("documents.id"),
+        index=True
     )
 
     document = relationship(

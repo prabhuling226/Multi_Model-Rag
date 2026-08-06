@@ -21,7 +21,8 @@ class Document(Base):
 
     id: Mapped[int] = mapped_column(
         Integer,
-        primary_key=True
+        primary_key=True,
+        index=True
     )
 
     filename: Mapped[str] = mapped_column(
@@ -45,7 +46,8 @@ class Document(Base):
     )
 
     owner_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id")
+        ForeignKey("users.id"),
+        index=True
     )
 
     owner = relationship(
