@@ -17,22 +17,24 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Custom Exception Logging Middleware (Assignment Requirement)
+# Exception Logging Middleware
 app.add_middleware(ExceptionLoggingMiddleware)
 
-# CORS Configuration for Localhost & Production (Vercel & Render)
+# CORS Middleware (Must be added last so it wraps all responses including exceptions & preflights)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:3000",
         "http://127.0.0.1:5173",
-        "https://multi-model-rag-1.onrender.com",
+        "https://multi-model-rag-olive.vercel.app",
+        "https://multi-model-rag.onrender.com",
     ],
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origin_regex=r"https://.*",
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Create Database Tables

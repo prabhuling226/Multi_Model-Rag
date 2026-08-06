@@ -15,6 +15,7 @@ router = APIRouter(
 
 
 @router.post("/upload")
+@router.post("/upload/")
 async def upload_documents(
     files: list[UploadFile] = File(...),
     db: Session = Depends(get_db),
@@ -28,6 +29,7 @@ async def upload_documents(
 
 
 @router.get("/")
+@router.get("")
 def get_documents(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
