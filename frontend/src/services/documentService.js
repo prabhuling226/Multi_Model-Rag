@@ -8,14 +8,10 @@ const documentService = {
             formData.append("files", file);
         });
 
+        // Do not pass manual Content-Type header so browser automatically computes multipart boundary
         const response = await api.post(
             "/documents/upload",
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
+            formData
         );
 
         return response.data;
