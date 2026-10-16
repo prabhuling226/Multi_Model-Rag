@@ -1,9 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
-
 from app.config.settings import settings
-
-
 from sqlalchemy import create_engine
 
 engine = create_engine(
@@ -18,14 +15,11 @@ SessionLocal = sessionmaker(
     autocommit=False
 )
 
-
 class Base(DeclarativeBase):
     pass
 
-
 def get_db():
     db = SessionLocal()
-
     try:
         yield db
     finally:
